@@ -1,5 +1,23 @@
 import axios from 'axios'
 
+// 配置axios默认值
+axios.defaults.baseURL = 'http://localhost:5173'
+axios.defaults.withCredentials = true // 允许跨域请求携带凭证
+
+// 添加请求拦截器
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 const BASE_URL = '/api'
 
 interface RegisterData {
@@ -21,6 +39,8 @@ interface UserInfo {
   nickname: string
   admin_account: string
   admin_nickname?: string
+  user_credit?: number
+  status?: number
 }
 
 // 管理员信息接口
@@ -33,6 +53,8 @@ interface AdminInfo {
 interface ManagedUser {
   user_account: string
   nickname: string
+  user_credit: number
+  status: number
 }
 
 export const register = async (data: RegisterData) => {
@@ -46,10 +68,22 @@ export const register = async (data: RegisterData) => {
 
 export const login = async (data: LoginData) => {
   try {
-    const response = await axios.post(`${BASE_URL}/auth/login`, data)
-    return response.data
-  } catch (error) {
-    throw error
+    console.log('发送登录请求，数据：', data);
+    console.log('请求URL：', `${BASE_URL}/auth/login`);
+    const response = await axios.post(`${BASE_URL}/auth/login`, data);
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+    }
+    console.log('登录响应：', response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error('登录错误：', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      config: error.config
+    });
+    throw error;
   }
 }
 
@@ -81,5 +115,46 @@ export const getManagedUsers = async (adminAccount: string) => {
   } catch (error) {
     throw error
   }
+}
+
+// 获取所有用户列表（管理员）
+export const getAllUsers = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/admin/users`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// 更新用户信用分（管理员）
+export const updateUserCredit = async (userAccount: string, newCredit: number) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/admin/update-credit`, {
+      userAccount,
+      newCredit
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// 更新用户状态（管理员）
+export const toggleUserStatus = async (userAccount: string, status: number) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/admin/toggle-user-status`, {
+      userAccount,
+      status
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// 登出
+export const logout = () => {
+  localStorage.removeItem('token');
 } 
 
