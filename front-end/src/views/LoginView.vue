@@ -22,6 +22,13 @@ const handleLogin = async () => {
       return
     }
 
+    console.log('开始登录流程');
+    console.log('登录表单数据：', {
+      email: formData.value.email,
+      password: formData.value.password,
+      role: selectedRole.value
+    });
+
     isLoading.value = true
     errorMessage.value = ''
 
@@ -31,16 +38,22 @@ const handleLogin = async () => {
       isAdmin: selectedRole.value === 'admin'
     })
 
+    console.log('登录成功，响应数据：', response);
+
     // 存储用户信息
     localStorage.setItem('user', JSON.stringify(response.user))
+    console.log('用户信息已存储到localStorage');
     
     // 根据角色跳转到不同页面
-    if (selectedRole.value === 'admin') {
-      router.push('/admin/borrow')
-    } else {
-      router.push('/user')
-    }
+    const targetPath = selectedRole.value === 'admin' ? '/admin/borrow' : '/user';
+    console.log('准备跳转到：', targetPath);
+    router.push(targetPath)
   } catch (error: any) {
+    console.error('登录处理错误：', {
+      error: error,
+      response: error.response?.data,
+      status: error.response?.status
+    });
     errorMessage.value = error.response?.data?.message || '登录失败，请重试'
   } finally {
     isLoading.value = false
