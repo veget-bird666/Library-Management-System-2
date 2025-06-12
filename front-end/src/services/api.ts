@@ -153,6 +153,16 @@ export const toggleUserStatus = async (userAccount: string, status: number) => {
   }
 }
 
+// 获取用户信用分
+export const getUserCredit = async (userAccount: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/users/${userAccount}/credit`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // 登出
 export const logout = () => {
   localStorage.removeItem('token');

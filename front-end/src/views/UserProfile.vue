@@ -50,6 +50,14 @@
               <label>账号类型</label>
               <div class="info-value">普通用户</div>
             </div>
+
+            <div class="info-item">
+              <label>信用评级</label>
+              <div class="info-value credit-info" :class="{ 'low-credit': userCredit < 3 }">
+                <span class="credit-rating">{{ getCreditRating(userCredit) }}</span>
+                <span class="credit-score">(信用分：{{ userCredit.toFixed(1) }})</span>
+              </div>
+            </div>
           </div>
           
           <div v-else class="loading-state">
@@ -63,7 +71,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { getUserInfo, getAdminInfo } from '@/services/api'
+import { getUserInfo, getAdminInfo, getUserCredit } from '@/services/api'
 
 const userInfo = ref({
   user_account: '',
@@ -78,6 +86,16 @@ const adminInfo = ref({
 })
 
 const loading = ref(false)
+const userCredit = ref(5.0) // 默认信用分为5.0
+
+// 获取信用评级
+const getCreditRating = (credit: number) => {
+  if (credit >= 8) return '优秀'
+  if (credit >= 6) return '良好'
+  if (credit >= 4) return '一般'
+  if (credit >= 2) return '较差'
+  return '很差'
+}
 
 onMounted(async () => {
   await loadUserInfo()
@@ -121,6 +139,12 @@ const loadUserInfo = async () => {
             adminInfo.value = adminResponse.data
             console.log('设置管理员信息:', adminInfo.value)
           }
+        }
+
+        // 获取用户信用分
+        const creditResponse = await getUserCredit(userAccount)
+        if (creditResponse.success) {
+          userCredit.value = creditResponse.data.credit
         }
       } else {
         console.error('获取用户信息失败:', userResponse)
@@ -274,5 +298,29 @@ const formatDate = (dateString: string) => {
 .loading-state p {
   font-size: 1rem;
   margin: 0;
+}
+
+.credit-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.credit-rating {
+  font-weight: 500;
+}
+
+.credit-score {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.low-credit {
+  color: #ff4949;
+}
+
+.low-credit .credit-score {
+  color: #ff4949;
+  opacity: 0.8;
 }
 </style> 

@@ -5,14 +5,6 @@
         <h2>用户管理</h2>
       </div>
   
-      <!-- 核心提示区域 -->
-      <div class="dev-notice">
-        <div class="notice-card">
-          <i class="icon icon-warning"></i>
-          <p class="notice-text">当前功能正在开发中，敬请期待！</p>
-        </div>
-      </div>
-
       <!-- 用户列表 -->
       <el-table :data="users" style="width: 100%">
         <el-table-column prop="user_account" label="账号" />

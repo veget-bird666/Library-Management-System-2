@@ -77,3 +77,11 @@ ADD INDEX `idx_status` (`status`);
 
 
 -- 添加用户信用字段 ALTER TABLE user ADD COLUMN user_credit DECIMAL(3,1) NOT NULL DEFAULT 5.0 COMMENT '用户信用（0-10分）' AFTER user_password; -- 添加信用值范围约束 ALTER TABLE user ADD CONSTRAINT chk_user_credit CHECK (user_credit >= 0 AND user_credit <= 10);
+
+
+CREATE TABLE chat_messages ( message_id INT AUTO_INCREMENT PRIMARY KEY COMMENT '消息ID', sender_type ENUM('user', 'admin') NOT NULL COMMENT '发送者类型：user用户/admin管理员', sender_account VARCHAR(50) NOT NULL COMMENT '发送者账号', receiver_type ENUM('user', 'admin') NOT NULL COMMENT '接收者类型：user用户/admin管理员', receiver_account VARCHAR(50) NOT NULL COMMENT '接收者账号', message_content TEXT NOT NULL COMMENT '消息内容', message_type ENUM('text', 'image', 'file') DEFAULT 'text' COMMENT '消息类型', is_read BOOLEAN DEFAULT FALSE COMMENT '是否已读', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间', updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间', INDEX idx_sender (sender_type, sender_account), INDEX idx_receiver (receiver_type, receiver_account), INDEX idx_created_at (created_at) ) COMMENT '聊天消息表';
+
+
+-- 聊天会话表（用于管理聊天关系） CREATE TABLE chat_sessions ( session_id INT AUTO_INCREMENT PRIMARY KEY COMMENT '会话ID', user_account VARCHAR(50) NOT NULL COMMENT '用户账号', admin_account VARCHAR(50) NOT NULL COMMENT '管理员账号', last_message_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '最后消息时间', last_message_content TEXT COMMENT '最后一条消息内容', unread_count_user INT DEFAULT 0 COMMENT '用户未读消息数', unread_count_admin INT DEFAULT 0 COMMENT '管理员未读消息数', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间', updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间', UNIQUE KEY unique_chat (user_account, admin_account), FOREIGN KEY (user_account) REFERENCES user(user_account), FOREIGN KEY (admin_account) REFERENCES admin(admin_account) ) COMMENT '聊天会话表';
+
+

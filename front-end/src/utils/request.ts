@@ -2,20 +2,23 @@ import axios from 'axios'
 
 // 创建axios实例
 const request = axios.create({
-  baseURL: '', // 使用相对路径，让Vite的代理配置生效
+  baseURL: 'http://localhost:3000', // 后端服务器地址
   timeout: 5000 // 请求超时时间
 })
 
 // 请求拦截器
 request.interceptors.request.use(
   config => {
-    // 从localStorage获取token
+    // 从localStorage获取用户信息
     const userInfo = JSON.parse(localStorage.getItem('user') || '{}')
-    const token = userInfo.token
+    // token 直接从 localStorage 获取
+    const token = localStorage.getItem('token')
+    
     if (token) {
       // 如果有token，添加到请求头
       config.headers.Authorization = `Bearer ${token}`
     }
+    
     return config
   },
   error => {

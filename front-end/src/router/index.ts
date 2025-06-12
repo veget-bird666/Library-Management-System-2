@@ -1,21 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
-import AdminView from '../views/AdminView.vue'
 import UserView from '../views/UserView.vue'
 import AdminLayout from '../layout/AdminLayout.vue'
-import Books        from '../views/Books.vue'
-import UserBooks    from '../views/UserBooks.vue'
+import Books from '../views/Books.vue'
+import UserBooks from '../views/UserBooks.vue'
 import UserLayout from '@/layout/UserLayout.vue'
 import Borrow from '@/views/Borrow.vue'
 import UserManage from '@/views/UserManage.vue'
-import TypeManage from '@/views/TypeManage.vue' 
 import AnnouncementManage from '@/views/AnnouncementManage.vue'
-import AdminManage from '@/views/AdminManage.vue'
 import UserBorrow from '@/views/UserBorrow.vue'
 import UserAnnouncement from '@/views/UserAnnouncement.vue'
 import UserProfile from '@/views/UserProfile.vue'
 import AdminProfile from '@/views/AdminProfile.vue'
+import Statistics from '@/views/Statistics.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,24 +55,14 @@ const router = createRouter({
           component: UserManage
         },
         {
-          path: 'categories',
-          name: 'admin-categories',
-          component: TypeManage
-        },
-        {
           path: 'announcements',
           name: 'admin-announcements',
           component: AnnouncementManage
         },
         {
-          path: 'settings',
-          name: 'admin-settings',
-          component: AdminManage
-        },
-        {
           path: 'statistics',
           name: 'admin-statistics',
-          component: AdminView
+          component: Statistics
         },
         {
           path: 'profile',

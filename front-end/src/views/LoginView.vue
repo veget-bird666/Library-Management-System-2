@@ -40,9 +40,10 @@ const handleLogin = async () => {
 
     console.log('登录成功，响应数据：', response);
 
-    // 存储用户信息
+    // 分别存储用户信息和token
     localStorage.setItem('user', JSON.stringify(response.user))
-    console.log('用户信息已存储到localStorage');
+    localStorage.setItem('token', response.token)
+    console.log('用户信息和token已存储到localStorage');
     
     // 根据角色跳转到不同页面
     const targetPath = selectedRole.value === 'admin' ? '/admin/borrow' : '/user';

@@ -8,6 +8,7 @@ const userBookRoutes = require('./routes/userBook');// 引入book路由
 const borrowRoutes = require('./routes/borrow'); // 引入借阅路由
 const announcementRoutes = require('./routes/announcement'); // 引入公告路由
 const adminRoutes = require('./routes/admin'); // 引入管理员路由
+const statisticsRouter = require('./routes/statistics');
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use('/api/userBooks', userBookRoutes); // 使用复数形式更符合RESTful
 app.use('/api/borrow', borrowRoutes); // 借阅相关API
 app.use('/api/announcements', announcementRoutes); // 公告相关API
 app.use('/api/admin', adminRoutes); // 管理员相关API
+app.use('/api/statistics', statisticsRouter);
 
 // 测试路由
 app.get('/', (req, res) => {
